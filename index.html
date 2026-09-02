@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ratio Calculator</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: radial-gradient(
+      circle at top left,
+      #26324d 0,
+      #121827 38%,
+      #090d16 100%
+    );
+    color: #f5f7fb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+  }
+
+  /* MAIN AREA */
+  .layout {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card {
+    width: min(600px, calc(100vw - 28px));
+    background: rgba(20, 26, 40, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 22px;
+    padding: 22px 26px;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(16px);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    letter-spacing: -0.04em;
+  }
+
+  .section {
+    margin-top: 15px;
+  }
+
+  .label {
+    margin-bottom: 7px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #aeb7ca;
+    text-transform: uppercase;
+  }
+
+  .grid {
+    display: grid;
+    gap: 8px;
+  }
+
+  .grid.two {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid.three {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  button {
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: #20283a;
+    color: #e9edf6;
+    border-radius: 11px;
+    min-height: 43px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: 0.16s ease;
+  }
+
+  /* Hover does NOT affect selected buttons or Ratios button */
+  button:hover:not(:disabled):not(.selected):not(.ratios-button) {
+    transform: translateY(-1px);
+    background: #283249;
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+
+  button.selected {
+    background: #6578ff;
+    border-color: #8493ff;
+    color: white;
+    box-shadow: 0 6px 18px rgba(101, 120, 255, 0.28);
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    color: #596276;
+    background: #171d2a;
+    border-color: rgba(255, 255, 255, 0.045);
+    text-decoration: line-through;
+    opacity: 0.65;
+  }
+
+  .value-input {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    outline: none;
+    background: #111724;
+    color: #fff;
+    padding: 0 14px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .value-input:focus {
+    border-color: #7182ff;
+    box-shadow: 0 0 0 3px rgba(113, 130, 255, 0.12);
+  }
+
+  /* RESULT */
+  .result {
+    margin-top: 18px;
+    padding: 15px 20px;
+    border-radius: 15px;
+    background: linear-gradient(
+      135deg,
+      rgba(101, 120, 255, 0.16),
+      rgba(255, 255, 255, 0.035)
+    );
+    border: 1px solid rgba(130, 145, 255, 0.22);
+    text-align: center;
+  }
+
+  .result-label {
+    color: #aeb7ca;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+  }
+
+  .result-value {
+    margin-top: 3px;
+    font-size: 38px;
+    font-weight: 850;
+    letter-spacing: -0.04em;
+    min-height: 46px;
+  }
+
+  .result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 9px;
+  }
+
+  .copy {
+    min-height: 36px;
+    padding: 7px 16px;
+  }
+
+  .copy.copied {
+    background: #6578ff;
+    border-color: #8493ff;
+  }
+
+  /* RESET */
+  .footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 13px;
+  }
+
+  .reset {
+    min-width: 125px;
+    min-height: 39px;
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #aeb7ca;
+  }
+
+  .reset:hover:not(:disabled) {
+    color: white;
+    background: #20283a;
+  }
+
+  /* RATIOS BUTTON */
+  .ratios-button {
+    position: absolute;
+    left: calc(100% + 14px);
+    top: 50%;
+    transform: translateY(-50%);
+    min-width: 90px;
+    min-height: 43px;
+    white-space: nowrap;
+  }
+
+  /* Ratios hover: light up, but NEVER move */
+  .ratios-button:hover {
+    background: #283249;
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+
+  /* RATIOS PANEL */
+  .ratios-panel {
+    position: fixed;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%) translateX(120%);
+    width: 300px;
+    max-width: calc(100vw - 36px);
+    background: rgba(20, 26, 40, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(18px);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.22s ease;
+  }
+
+  .ratios-panel.open {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .ratios-title {
+    font-size: 20px;
+    font-weight: 850;
+    margin-bottom: 14px;
+    letter-spacing: -0.03em;
+  }
+
+  .ratio-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .ratio-row:last-child {
+    border-bottom: none;
+  }
+
+  .ratio-name {
+    color: #aeb7ca;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .ratio-name strong {
+    display: block;
+    color: #e9edf6;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .ratio-value {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 850px) {
+    .ratios-button {
+      position: fixed;
+      left: auto;
+      right: 12px;
+      top: 12px;
+      transform: none;
+      z-index: 5;
+    }
+
+    .ratios-button:hover {
+      transform: none;
+      background: #283249;
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .card {
+      margin-top: 45px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .card {
+      padding: 18px 15px;
+      border-radius: 18px;
+    }
+
+    h1 {
+      font-size: 27px;
+    }
+
+    .grid.three {
+      grid-template-columns: 1fr;
+    }
+
+    .grid.two {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .ratios-panel {
+      right: 12px;
+      width: calc(100vw - 24px);
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+  <!-- CALCULATOR -->
+  <main class="card">
+
+    <header class="header">
+      <h1>Ratio Calculator</h1>
+    </header>
+
+    <!-- PROP FIRM -->
+    <section class="section">
+      <div class="label">Prop firm</div>
+      <div class="grid two">
+        <button id="breakout" onclick="selectCompany('Breakout')">Breakout</button>
+        <button id="hypernova" onclick="selectCompany('Hypernova')">Hypernova</button>
+      </div>
+    </section>
+
+    <!-- ACCOUNT -->
+    <section class="section">
+      <div class="label">Account</div>
+      <div class="grid three">
+        <button id="classic" onclick="selectAccount('Classic')">Classic</button>
+        <button id="turbo" onclick="selectAccount('Turbo')">Turbo</button>
+        <button id="standard" onclick="selectAccount('Standard')">Standard (Classic)</button>
+      </div>
+    </section>
+
+    <!-- PHASE -->
+    <section class="section">
+      <div class="label">Phase</div>
+      <div class="grid two">
+        <button id="phase1" onclick="selectPhase('Phase 1')">Phase 1</button>
+        <button id="funded" onclick="selectPhase('Funded')">Funded</button>
+      </div>
+    </section>
+
+    <!-- VALUE -->
+    <section class="section">
+      <div class="label">Value</div>
+      <input id="value" class="value-input" type="text" inputmode="decimal" placeholder="Enter value" oninput="calculate()">
+    </section>
+
+    <!-- RESULT -->
+    <section class="result">
+      <div class="result-label">RESULT</div>
+      <div id="result" class="result-value">—</div>
+      <div class="result-actions">
+        <button id="copyButton" class="copy" onclick="copyResult()">Copy</button>
+      </div>
+    </section>
+
+    <!-- RESET -->
+    <div class="footer">
+      <button class="reset" onclick="resetCalculator()">↻ &nbsp; Reset</button>
+    </div>
+
+  </main>
+
+  <!-- RATIOS BUTTON -->
+  <button class="ratios-button" onclick="toggleRatios()">Ratios</button>
+
+</div>
+
+<!-- RATIOS PANEL -->
+<aside id="ratiosPanel" class="ratios-panel">
+
+  <div class="ratios-title">Ratios</div>
+
+  <div class="ratio-row">
+    <div class="ratio-name">
+      <strong>Breakout · Classic</strong>
+      Phase 1
+    </div>
+    <div class="ratio-value">÷ 3.55</div>
+  </div>
+
+  <div class="ratio-row">
+    <div class="ratio-name">
+      <strong>Breakout · Classic</strong>
+      Funded
+    </div>
+    <div class="ratio-value">× 0.80</div>
+  </div>
+
+  <div class="ratio-row">
+    <div class="ratio-name">
+      <strong>Breakout · Turbo</strong>
+      Phase 1
+    </div>
+    <div class="ratio-value">÷ 15</div>
+  </div>
+
+  <div class="ratio-row">
+    <div class="ratio-name">
+      <strong>Breakout · Turbo</strong>
+      Funded
+    </div>
+    <div class="ratio-value">× 0.75</div>
+  </div>
+
+  <div class="ratio-row">
+    <div class="ratio-name">
+      <strong>Hypernova · Standard (Classic)</strong>
+      Phase 1
+    </div>
+    <div class="ratio-value">÷ 3.49</div>
+  </div>
+
+  <div class="ratio-row">
+    <div class="ratio-name">
+      <strong>Hypernova · Standard (Classic)</strong>
+      Funded
+    </div>
+    <div class="ratio-value">× 0.70</div>
+  </div>
+
+</aside>
+
+<script>
+
+let company = "";
+let account = "";
+let phase = "";
+
+/* COMPANY */
+function selectCompany(value) {
+  company = value;
+
+  if (company === "Hypernova") {
+    account = "Standard";
+  }
+  else if (account === "Standard") {
+    account = "";
+  }
+
+  updateUI();
+  calculate();
+}
+
+/* ACCOUNT */
+function selectAccount(value) {
+  if (company === "Hypernova" && value !== "Standard") {
+    return;
+  }
+
+  account = value;
+
+  updateUI();
+  calculate();
+}
+
+/* PHASE */
+function selectPhase(value) {
+  phase = value;
+
+  updateUI();
+  calculate();
+}
+
+/* UPDATE BUTTONS */
+function updateUI() {
+
+  const buttons = {
+    breakout: company === "Breakout",
+    hypernova: company === "Hypernova",
+
+    classic: account === "Classic",
+    turbo: account === "Turbo",
+    standard: account === "Standard",
+
+    phase1: phase === "Phase 1",
+    funded: phase === "Funded"
+  };
+
+  Object.entries(buttons).forEach(
+    ([id, selected]) => {
+      document
+        .getElementById(id)
+        .classList
+        .toggle("selected", selected);
+    }
+  );
+
+  /*
+    Hypernova only supports
+    Standard (Classic).
+
+    Therefore:
+    Classic = disabled
+    Turbo = disabled
+    Standard = enabled
+  */
+
+  document.getElementById("classic").disabled =
+    company === "Hypernova";
+
+  document.getElementById("turbo").disabled =
+    company === "Hypernova";
+
+  document.getElementById("standard").disabled =
+    company !== "Hypernova";
+}
+
+/* PARSE VALUE */
+function parseValue(input) {
+
+  let s = input
+    .trim()
+    .replace(/\s/g, "");
+
+  if (!s) {
+    return NaN;
+  }
+
+  /*
+    Supports:
+
+    100.50
+    100,50
+    1,000.50
+    1.000,50
+
+    The last separator is treated
+    as the decimal separator.
+  */
+
+  if (
+    s.includes(",") &&
+    s.includes(".")
+  ) {
+
+    const lastComma =
+      s.lastIndexOf(",");
+
+    const lastDot =
+      s.lastIndexOf(".");
+
+    const decimalSep =
+      lastComma > lastDot
+        ? ","
+        : ".";
+
+    const thousandsSep =
+      decimalSep === ","
+        ? "."
+        : ",";
+
+    s = s
+      .replace(
+        new RegExp(
+          "\\" + thousandsSep,
+          "g"
+        ),
+        ""
+      )
+      .replace(
+        decimalSep,
+        "."
+      );
+
+  }
+  else {
+    s = s.replace(",", ".");
+  }
+
+  return Number(s);
+}
+
+/* CALCULATE */
+function calculate() {
+
+  const input =
+    document.getElementById("value").value;
+
+  const resultEl =
+    document.getElementById("result");
+
+  if (
+    !company ||
+    !account ||
+    !phase ||
+    input.trim() === ""
+  ) {
+    resultEl.textContent = "—";
+    return;
+  }
+
+  const value =
+    parseValue(input);
+
+  if (!Number.isFinite(value)) {
+    resultEl.textContent = "—";
+    return;
+  }
+
+  let result;
+
+  if (
+    company === "Breakout" &&
+    account === "Classic" &&
+    phase === "Phase 1"
+  ) {
+    result = value / 3.55;
+  }
+
+  else if (
+    company === "Breakout" &&
+    account === "Classic" &&
+    phase === "Funded"
+  ) {
+    result = value * 0.80;
+  }
+
+  else if (
+    company === "Breakout" &&
+    account === "Turbo" &&
+    phase === "Phase 1"
+  ) {
+    result = value / 15;
+  }
+
+  else if (
+    company === "Breakout" &&
+    account === "Turbo" &&
+    phase === "Funded"
+  ) {
+    result = value * 0.75;
+  }
+
+  else if (
+    company === "Hypernova" &&
+    account === "Standard" &&
+    phase === "Phase 1"
+  ) {
+    result = value / 3.49;
+  }
+
+  else if (
+    company === "Hypernova" &&
+    account === "Standard" &&
+    phase === "Funded"
+  ) {
+    result = value * 0.70;
+  }
+
+  else {
+    resultEl.textContent = "—";
+    return;
+  }
+
+  /*
+    ALWAYS display the result
+    with a decimal POINT
+    and exactly 3 decimals.
+  */
+
+  resultEl.textContent =
+    result.toFixed(3);
+}
+
+/* COPY RESULT */
+async function copyResult() {
+
+  const result =
+    document.getElementById("result").textContent;
+
+  if (result === "—") {
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(result);
+  }
+
+  catch {
+
+    const area =
+      document.createElement("textarea");
+
+    area.value = result;
+
+    document.body.appendChild(area);
+
+    area.select();
+
+    document.execCommand("copy");
+
+    area.remove();
+  }
+
+  const button =
+    document.getElementById("copyButton");
+
+  button.textContent = "Copied!";
+
+  button.classList.add("copied");
+
+  setTimeout(() => {
+
+    button.textContent = "Copy";
+
+    button.classList.remove("copied");
+
+  }, 1200);
+}
+
+/* RESET */
+function resetCalculator() {
+
+  company = "";
+  account = "";
+  phase = "";
+
+  document.getElementById("value").value = "";
+
+  document.getElementById("result").textContent = "—";
+
+  const copyButton =
+    document.getElementById("copyButton");
+
+  copyButton.textContent = "Copy";
+
+  copyButton.classList.remove("copied");
+
+  updateUI();
+}
+
+/* RATIOS PANEL */
+function toggleRatios() {
+
+  const panel =
+    document.getElementById("ratiosPanel");
+
+  panel.classList.toggle("open");
+}
+
+/* INITIALIZE */
+updateUI();
+
+</script>
+
+</body>
+</html>

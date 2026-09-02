@@ -1213,14 +1213,25 @@ function updateUI() {
   ];
 
 
-  sections.forEach(id => {
+  document
+  .getElementById("accountSection")
+  .classList
+  .toggle("visible", !!company);
 
-    document
-      .getElementById(id)
-      .classList
-      .toggle("visible", !!company);
+document
+  .getElementById("phaseSection")
+  .classList
+  .toggle("visible", !!account);
 
-  });
+document
+  .getElementById("amountSection")
+  .classList
+  .toggle("visible", !!phase);
+
+document
+  .getElementById("resultSection")
+  .classList
+  .toggle("visible", !!phase);
 
 }
 

@@ -716,7 +716,7 @@
       </div>
 
       <div id="result" class="result-value">
-        —
+        
       </div>
 
       <div class="result-actions">
@@ -1034,6 +1034,7 @@ let account = "";
 let phase = "";
 
 let activePresetName = null;
+let resultShown = false;
 
 
 /* =========================================================
@@ -1228,11 +1229,6 @@ document
   .classList
   .toggle("visible", !!phase);
 
-document
-  .getElementById("resultSection")
-  .classList
-  .toggle("visible", !!phase);
-
 }
 
 
@@ -1379,6 +1375,16 @@ function calculate() {
   const resultEl =
     document.getElementById("result");
 
+  const resultSection =
+    document.getElementById("resultSection");
+
+
+  if (input.trim() !== "") {
+    resultShown = true;
+  }
+
+  resultSection.classList.toggle("visible", resultShown);
+
 
   if (
     !company ||
@@ -1387,12 +1393,11 @@ function calculate() {
     input.trim() === ""
   ) {
 
-    resultEl.textContent = "—";
+    resultEl.textContent = "";
 
     return;
 
   }
-
 
   const value =
     parseValue(input);
@@ -1523,11 +1528,15 @@ function resetCalculator() {
   account = "";
   phase = "";
 
-  document.getElementById("value").value = "";
+  resultShown = false;
 
-  document.getElementById("result").textContent = "—";
+document.getElementById("value").value = "";
 
+document.getElementById("result").textContent = "—";
 
+document
+  .getElementById("resultSection")
+  .classList.remove("visible");
   const copyButton =
     document.getElementById("copyButton");
 

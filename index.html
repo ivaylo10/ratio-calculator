@@ -10,6 +10,15 @@
     box-sizing: border-box;
   }
 
+  .top-left-logo {
+    position: fixed;
+    top: 5px;
+    left: 20px;
+    width: 1100px;
+    height: auto;
+    z-index: 1000;
+  }
+
   body {
     margin: 0;
     min-height: 100vh;
@@ -22,16 +31,17 @@
     );
     color: #f5f7fb;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 14px;
+    padding: 85px 14px 14px;
   }
 
   /* MAIN AREA */
+
   .layout {
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
   }
 
@@ -69,6 +79,46 @@
     text-transform: uppercase;
   }
 
+  /* ANIMATED SECTIONS */
+
+  #accountSection,
+  #phaseSection,
+  #amountSection,
+  #resultSection {
+    opacity: 0;
+    transform: translateY(-8px);
+    max-height: 0;
+    overflow: hidden;
+    pointer-events: none;
+    margin-top: 0;
+
+    transition:
+      opacity 0.15s ease,
+      transform 0.15s ease,
+      max-height 0.15s ease,
+      margin-top 0.15s ease;
+  }
+
+  #accountSection.visible,
+  #phaseSection.visible,
+  #amountSection.visible,
+  #resultSection.visible {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 200px;
+    overflow: visible;
+    pointer-events: auto;
+    margin-top: 15px;
+
+    transition:
+      opacity 0.2s ease,
+      transform 0.1s ease,
+      max-height 0.95s ease,
+      margin-top 0.1s ease;
+  }
+
+  /* GRID */
+
   .grid {
     display: grid;
     gap: 8px;
@@ -81,6 +131,8 @@
   .grid.three {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  /* BUTTONS */
 
   button {
     border: 1px solid rgba(255, 255, 255, 0.10);
@@ -95,7 +147,6 @@
     transition: 0.16s ease;
   }
 
-  /* Hover does NOT affect selected buttons or Ratios button */
   button:hover:not(:disabled):not(.selected):not(.ratios-button) {
     transform: translateY(-1px);
     background: #283249;
@@ -118,6 +169,8 @@
     opacity: 0.65;
   }
 
+  /* VALUE INPUT */
+
   .value-input {
     width: 100%;
     height: 48px;
@@ -137,8 +190,8 @@
   }
 
   /* RESULT */
+
   .result {
-    margin-top: 18px;
     padding: 15px 20px;
     border-radius: 15px;
     background: linear-gradient(
@@ -183,6 +236,7 @@
   }
 
   /* RESET */
+
   .footer {
     display: flex;
     justify-content: center;
@@ -203,6 +257,7 @@
   }
 
   /* RATIOS BUTTON */
+
   .ratios-button {
     position: absolute;
     left: calc(100% + 14px);
@@ -213,13 +268,13 @@
     white-space: nowrap;
   }
 
-  /* Ratios hover: light up, but NEVER move */
   .ratios-button:hover {
     background: #283249;
     border-color: rgba(255, 255, 255, 0.18);
   }
 
   /* RATIOS PANEL */
+
   .ratios-panel {
     position: fixed;
     top: 50%;
@@ -227,6 +282,8 @@
     transform: translateY(-50%) translateX(120%);
     width: 300px;
     max-width: calc(100vw - 36px);
+    max-height: calc(100vh - 36px);
+    overflow-y: auto;
     background: rgba(20, 26, 40, 0.98);
     border: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: 18px;
@@ -248,9 +305,27 @@
   .ratios-title {
     font-size: 20px;
     font-weight: 850;
-    margin-bottom: 14px;
+    margin-bottom: 5px;
     letter-spacing: -0.03em;
   }
+
+  /* CURRENT PRESET */
+
+  .current-preset {
+    margin-bottom: 15px;
+    padding: 9px 11px;
+    border-radius: 10px;
+    background: rgba(101, 120, 255, 0.10);
+    border: 1px solid rgba(101, 120, 255, 0.18);
+    font-size: 11px;
+    color: #aeb7ca;
+  }
+
+  .current-preset strong {
+    color: #ffffff;
+  }
+
+  /* RATIO ROWS */
 
   .ratio-row {
     display: grid;
@@ -278,12 +353,211 @@
     margin-bottom: 2px;
   }
 
-  .ratio-value {
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 800;
-    white-space: nowrap;
+  /* RATIO INPUT */
+
+  .ratio-input-wrapper {
+    display: flex;
+    align-items: center;
+    width: 105px;
+    height: 38px;
+    border-radius: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: #111724;
+    transition: 0.16s ease;
   }
+
+  .ratio-input-wrapper:focus-within {
+    border-color: #7182ff;
+    box-shadow: 0 0 0 3px rgba(113, 130, 255, 0.10);
+  }
+
+  .ratio-prefix {
+    width: 30px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 850;
+  }
+
+  .ratio-prefix.multiply {
+    color: #4ade80;
+  }
+
+  .ratio-prefix.divide {
+    color: #f97316;
+  }
+
+  .ratio-input {
+    width: 75px;
+    height: 36px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #ffffff;
+    padding: 0 8px 0 0;
+    font-size: 14px;
+    font-weight: 750;
+  }
+
+  .ratio-input::-webkit-inner-spin-button,
+  .ratio-input::-webkit-outer-spin-button {
+    opacity: 1;
+    filter: invert(1);
+  }
+
+  /* PRESETS */
+
+  .presets-section {
+    margin-top: 18px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .presets-title {
+    font-size: 13px;
+    font-weight: 850;
+    margin-bottom: 9px;
+  }
+
+  .preset-input-row {
+    display: flex;
+    gap: 7px;
+  }
+
+  .preset-name-input {
+    flex: 1;
+    min-width: 0;
+    height: 39px;
+    border-radius: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    outline: none;
+    background: #111724;
+    color: white;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .preset-name-input:focus {
+    border-color: #7182ff;
+  }
+
+  .save-preset {
+    min-height: 39px;
+    padding: 7px 12px;
+    background: #6578ff;
+    border-color: #8493ff;
+  }
+
+  .save-preset:hover {
+    background: #7182ff;
+  }
+
+  .preset-list {
+    margin-top: 10px;
+  }
+
+  .preset-empty {
+    color: #596276;
+    font-size: 12px;
+    padding: 8px 0;
+  }
+
+  .preset-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 7px;
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.025);
+    transition: 0.16s ease;
+  }
+
+  .preset-item.selected-preset {
+    background: rgba(101, 120, 255, 0.12);
+    border-color: rgba(132, 147, 255, 0.38);
+    box-shadow: 0 0 0 1px rgba(101, 120, 255, 0.08);
+  }
+
+  .preset-item-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #e9edf6;
+    font-size: 12px;
+    font-weight: 750;
+  }
+
+  .selected-badge {
+    flex-shrink: 0;
+    padding: 3px 6px;
+    border-radius: 6px;
+    background: #6578ff;
+    color: white;
+    font-size: 9px;
+    font-weight: 850;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .preset-action {
+    min-height: 31px;
+    height: 31px;
+    padding: 5px 8px;
+    border-radius: 8px;
+    font-size: 10px;
+    background: #20283a;
+  }
+
+  .preset-action:hover {
+    background: #283249;
+  }
+
+  .preset-delete {
+    color: #e98d8d;
+  }
+
+  .preset-delete:hover {
+    background: rgba(220, 80, 80, 0.14);
+    color: #ffaaaa;
+  }
+
+  /* RESET RATIOS */
+
+  .ratio-reset-row {
+    margin-top: 13px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    justify-content: center;
+  }
+
+  .reset-ratios {
+    min-height: 35px;
+    font-size: 11px;
+    color: #aeb7ca;
+    background: transparent;
+  }
+
+  .reset-ratios:hover {
+    background: #20283a;
+    color: white;
+  }
+
+  /* STATUS */
+
+  .status-message {
+    min-height: 17px;
+    margin-top: 7px;
+    text-align: center;
+    font-size: 10px;
+    color: #aeb7ca;
+  }
+
+  /* MOBILE */
 
   @media (max-width: 850px) {
     .ratios-button {
@@ -328,15 +602,26 @@
       right: 12px;
       width: calc(100vw - 24px);
     }
+
+    .preset-item {
+      flex-wrap: wrap;
+    }
+
+    .preset-item-name {
+      min-width: 100px;
+    }
   }
 </style>
 </head>
 
 <body>
 
+<img src="logo.png" class="top-left-logo" alt="Logo">
+
 <div class="layout">
 
   <!-- CALCULATOR -->
+
   <main class="card">
 
     <header class="header">
@@ -344,139 +629,510 @@
     </header>
 
     <!-- PROP FIRM -->
+
     <section class="section">
       <div class="label">Prop firm</div>
+
       <div class="grid two">
-        <button id="breakout" onclick="selectCompany('Breakout')">Breakout</button>
-        <button id="hypernova" onclick="selectCompany('Hypernova')">Hypernova</button>
+
+        <button id="breakout" onclick="selectCompany('Breakout')">
+          Breakout
+        </button>
+
+        <button id="hypernova" onclick="selectCompany('Hypernova')">
+          Hypernova
+        </button>
+
       </div>
     </section>
 
     <!-- ACCOUNT -->
-    <section class="section">
+
+    <section class="section" id="accountSection">
+
       <div class="label">Account</div>
+
       <div class="grid three">
-        <button id="classic" onclick="selectAccount('Classic')">Classic</button>
-        <button id="turbo" onclick="selectAccount('Turbo')">Turbo</button>
-        <button id="standard" onclick="selectAccount('Standard')">Standard (Classic)</button>
+
+        <button id="classic" onclick="selectAccount('Classic')">
+          Classic
+        </button>
+
+        <button id="turbo" onclick="selectAccount('Turbo')">
+          Turbo
+        </button>
+
+        <button id="standard" onclick="selectAccount('Standard')">
+          Standard (Classic)
+        </button>
+
       </div>
+
     </section>
 
     <!-- PHASE -->
-    <section class="section">
+
+    <section class="section" id="phaseSection">
+
       <div class="label">Phase</div>
+
       <div class="grid two">
-        <button id="phase1" onclick="selectPhase('Phase 1')">Phase 1</button>
-        <button id="funded" onclick="selectPhase('Funded')">Funded</button>
+
+        <button id="phase1" onclick="selectPhase('Phase 1')">
+          Phase 1
+        </button>
+
+        <button id="funded" onclick="selectPhase('Funded')">
+          Funded
+        </button>
+
       </div>
+
     </section>
 
     <!-- VALUE -->
-    <section class="section">
-      <div class="label">Value</div>
-      <input id="value" class="value-input" type="text" inputmode="decimal" placeholder="Enter value" oninput="calculate()">
+
+    <section class="section" id="amountSection">
+
+      <div class="label">Amount</div>
+
+      <input
+        id="value"
+        class="value-input"
+        type="text"
+        inputmode="decimal"
+        placeholder="Enter value"
+        oninput="calculate()"
+      >
+
     </section>
 
     <!-- RESULT -->
-    <section class="result">
-      <div class="result-label">RESULT</div>
-      <div id="result" class="result-value">—</div>
-      <div class="result-actions">
-        <button id="copyButton" class="copy" onclick="copyResult()">Copy</button>
+
+    <section class="section result" id="resultSection">
+
+      <div class="result-label">
+        RESULT (AMOUNT FOR KCEX)
       </div>
+
+      <div id="result" class="result-value">
+        —
+      </div>
+
+      <div class="result-actions">
+
+        <button
+          id="copyButton"
+          class="copy"
+          onclick="copyResult()"
+        >
+          Copy
+        </button>
+
+      </div>
+
     </section>
 
     <!-- RESET -->
+
     <div class="footer">
-      <button class="reset" onclick="resetCalculator()">↻ &nbsp; Reset</button>
+
+      <button class="reset" onclick="resetCalculator()">
+        ↻ &nbsp; Reset
+      </button>
+
     </div>
 
   </main>
 
   <!-- RATIOS BUTTON -->
-  <button class="ratios-button" onclick="toggleRatios()">Ratios</button>
+
+  <button
+    class="ratios-button"
+    onclick="toggleRatios()"
+  >
+    Ratios
+  </button>
 
 </div>
 
+
 <!-- RATIOS PANEL -->
+
 <aside id="ratiosPanel" class="ratios-panel">
 
-  <div class="ratios-title">Ratios</div>
+  <div class="ratios-title">
+    Ratios
+  </div>
+
+  <!-- CURRENT PRESET -->
+
+  <div class="current-preset">
+
+    Current preset:
+    <strong id="currentPresetLabel">None</strong>
+
+  </div>
+
+
+  <!-- BREAKOUT CLASSIC PHASE 1 -->
 
   <div class="ratio-row">
+
     <div class="ratio-name">
       <strong>Breakout · Classic</strong>
       Phase 1
     </div>
-    <div class="ratio-value">÷ 3.55</div>
+
+    <div class="ratio-input-wrapper">
+
+      <span
+        class="ratio-prefix divide"
+        id="prefix-breakout-classic-phase1"
+      >
+        ÷
+      </span>
+
+      <input
+        id="ratio-breakout-classic-phase1"
+        class="ratio-input"
+        type="number"
+        step="0.01"
+        value="3.55"
+        oninput="ratioChanged()"
+      >
+
+    </div>
+
   </div>
 
+
+  <!-- BREAKOUT CLASSIC FUNDED -->
+
   <div class="ratio-row">
+
     <div class="ratio-name">
       <strong>Breakout · Classic</strong>
       Funded
     </div>
-    <div class="ratio-value">× 0.80</div>
+
+    <div class="ratio-input-wrapper">
+
+      <span
+        class="ratio-prefix multiply"
+        id="prefix-breakout-classic-funded"
+      >
+        ×
+      </span>
+
+      <input
+        id="ratio-breakout-classic-funded"
+        class="ratio-input"
+        type="number"
+        step="0.01"
+        value="0.80"
+        oninput="ratioChanged()"
+      >
+
+    </div>
+
   </div>
 
+
+  <!-- BREAKOUT TURBO PHASE 1 -->
+
   <div class="ratio-row">
+
     <div class="ratio-name">
       <strong>Breakout · Turbo</strong>
       Phase 1
     </div>
-    <div class="ratio-value">× 0.15</div>
+
+    <div class="ratio-input-wrapper">
+
+      <span
+        class="ratio-prefix multiply"
+        id="prefix-breakout-turbo-phase1"
+      >
+        ×
+      </span>
+
+      <input
+        id="ratio-breakout-turbo-phase1"
+        class="ratio-input"
+        type="number"
+        step="0.01"
+        value="0.15"
+        oninput="ratioChanged()"
+      >
+
+    </div>
+
   </div>
 
+
+  <!-- BREAKOUT TURBO FUNDED -->
+
   <div class="ratio-row">
+
     <div class="ratio-name">
       <strong>Breakout · Turbo</strong>
       Funded
     </div>
-    <div class="ratio-value">× 0.75</div>
+
+    <div class="ratio-input-wrapper">
+
+      <span
+        class="ratio-prefix multiply"
+        id="prefix-breakout-turbo-funded"
+      >
+        ×
+      </span>
+
+      <input
+        id="ratio-breakout-turbo-funded"
+        class="ratio-input"
+        type="number"
+        step="0.01"
+        value="0.75"
+        oninput="ratioChanged()"
+      >
+
+    </div>
+
   </div>
 
+
+  <!-- HYPERNOVA STANDARD PHASE 1 -->
+
   <div class="ratio-row">
+
     <div class="ratio-name">
       <strong>Hypernova · Standard (Classic)</strong>
       Phase 1
     </div>
-    <div class="ratio-value">÷ 3.49</div>
+
+    <div class="ratio-input-wrapper">
+
+      <span
+        class="ratio-prefix divide"
+        id="prefix-hypernova-standard-phase1"
+      >
+        ÷
+      </span>
+
+      <input
+        id="ratio-hypernova-standard-phase1"
+        class="ratio-input"
+        type="number"
+        step="0.01"
+        value="3.49"
+        oninput="ratioChanged()"
+      >
+
+    </div>
+
   </div>
 
+
+  <!-- HYPERNOVA STANDARD FUNDED -->
+
   <div class="ratio-row">
+
     <div class="ratio-name">
       <strong>Hypernova · Standard (Classic)</strong>
       Funded
     </div>
-    <div class="ratio-value">× 0.70</div>
+
+    <div class="ratio-input-wrapper">
+
+      <span
+        class="ratio-prefix multiply"
+        id="prefix-hypernova-standard-funded"
+      >
+        ×
+      </span>
+
+      <input
+        id="ratio-hypernova-standard-funded"
+        class="ratio-input"
+        type="number"
+        step="0.01"
+        value="0.70"
+        oninput="ratioChanged()"
+      >
+
+    </div>
+
+  </div>
+
+
+  <!-- PRESETS -->
+
+  <div class="presets-section">
+
+    <div class="presets-title">
+      Presets
+    </div>
+
+    <div class="preset-input-row">
+
+      <input
+        id="presetName"
+        class="preset-name-input"
+        type="text"
+        placeholder="Preset name"
+        maxlength="40"
+      >
+
+      <button
+        class="save-preset"
+        onclick="savePreset()"
+      >
+        Save
+      </button>
+
+    </div>
+
+    <div
+      id="presetStatus"
+      class="status-message"
+    ></div>
+
+    <div
+      id="presetList"
+      class="preset-list"
+    ></div>
+
+  </div>
+
+
+  <!-- RESET RATIOS -->
+
+  <div class="ratio-reset-row">
+
+    <button
+      class="reset-ratios"
+      onclick="resetRatiosToDefaults()"
+    >
+      ↻ &nbsp; Reset ratios to defaults
+    </button>
+
   </div>
 
 </aside>
 
+
 <script>
+
+/* =========================================================
+   STATE
+========================================================= */
 
 let company = "";
 let account = "";
 let phase = "";
 
-/* COMPANY */
+let activePresetName = null;
+
+
+/* =========================================================
+   DEFAULT RATIOS
+========================================================= */
+
+const defaultRatios = {
+  breakoutClassicPhase1: 3.55,
+  breakoutClassicFunded: 0.80,
+  breakoutTurboPhase1: 0.15,
+  breakoutTurboFunded: 0.75,
+  hypernovaStandardPhase1: 3.49,
+  hypernovaStandardFunded: 0.70
+};
+
+
+/* =========================================================
+   RATIO INPUT IDS
+========================================================= */
+
+const ratioInputIds = {
+  breakoutClassicPhase1: "ratio-breakout-classic-phase1",
+  breakoutClassicFunded: "ratio-breakout-classic-funded",
+  breakoutTurboPhase1: "ratio-breakout-turbo-phase1",
+  breakoutTurboFunded: "ratio-breakout-turbo-funded",
+  hypernovaStandardPhase1: "ratio-hypernova-standard-phase1",
+  hypernovaStandardFunded: "ratio-hypernova-standard-funded"
+};
+
+
+/* =========================================================
+   CALCULATION RULES
+========================================================= */
+
+const calculationRules = {
+  "Breakout|Classic|Phase 1": {
+    ratio: "breakoutClassicPhase1",
+    operation: "divide"
+  },
+
+  "Breakout|Classic|Funded": {
+    ratio: "breakoutClassicFunded",
+    operation: "multiply"
+  },
+
+  "Breakout|Turbo|Phase 1": {
+    ratio: "breakoutTurboPhase1",
+    operation: "multiply"
+  },
+
+  "Breakout|Turbo|Funded": {
+    ratio: "breakoutTurboFunded",
+    operation: "multiply"
+  },
+
+  "Hypernova|Standard|Phase 1": {
+    ratio: "hypernovaStandardPhase1",
+    operation: "divide"
+  },
+
+  "Hypernova|Standard|Funded": {
+    ratio: "hypernovaStandardFunded",
+    operation: "multiply"
+  }
+};
+
+
+/* =========================================================
+   COMPANY
+========================================================= */
+
 function selectCompany(value) {
+
   company = value;
 
   if (company === "Hypernova") {
     account = "Standard";
   }
+
   else if (account === "Standard") {
     account = "";
   }
 
   updateUI();
   calculate();
+
 }
 
-/* ACCOUNT */
+
+/* =========================================================
+   ACCOUNT
+========================================================= */
+
 function selectAccount(value) {
-  if (company === "Hypernova" && value !== "Standard") {
+
+  if (
+    company === "Hypernova" &&
+    value !== "Standard"
+  ) {
     return;
   }
 
@@ -484,17 +1140,28 @@ function selectAccount(value) {
 
   updateUI();
   calculate();
+
 }
 
-/* PHASE */
+
+/* =========================================================
+   PHASE
+========================================================= */
+
 function selectPhase(value) {
+
   phase = value;
 
   updateUI();
   calculate();
+
 }
 
-/* UPDATE BUTTONS */
+
+/* =========================================================
+   UPDATE UI
+========================================================= */
+
 function updateUI() {
 
   const buttons = {
@@ -509,57 +1176,70 @@ function updateUI() {
     funded: phase === "Funded"
   };
 
+
   Object.entries(buttons).forEach(
     ([id, selected]) => {
+
       document
         .getElementById(id)
         .classList
         .toggle("selected", selected);
+
     }
   );
 
-  /*
-    Hypernova only supports
-    Standard (Classic).
-
-    Therefore:
-    Classic = disabled
-    Turbo = disabled
-    Standard = enabled
-  */
 
   document.getElementById("classic").disabled =
-    company === "Hypernova";
+    !company || company === "Hypernova";
 
   document.getElementById("turbo").disabled =
-    company === "Hypernova";
+    !company || company === "Hypernova";
 
   document.getElementById("standard").disabled =
-    company !== "Hypernova";
+    !company || company !== "Hypernova";
+
+  document.getElementById("phase1").disabled =
+    !company;
+
+  document.getElementById("funded").disabled =
+    !company;
+
+
+  const sections = [
+    "accountSection",
+    "phaseSection",
+    "amountSection",
+    "resultSection"
+  ];
+
+
+  sections.forEach(id => {
+
+    document
+      .getElementById(id)
+      .classList
+      .toggle("visible", !!company);
+
+  });
+
 }
 
-/* PARSE VALUE */
+
+/* =========================================================
+   PARSE VALUE
+========================================================= */
+
 function parseValue(input) {
 
   let s = input
     .trim()
     .replace(/\s/g, "");
 
+
   if (!s) {
     return NaN;
   }
 
-  /*
-    Supports:
-
-    100.50
-    100,50
-    1,000.50
-    1.000,50
-
-    The last separator is treated
-    as the decimal separator.
-  */
 
   if (
     s.includes(",") &&
@@ -582,6 +1262,7 @@ function parseValue(input) {
         ? "."
         : ",";
 
+
     s = s
       .replace(
         new RegExp(
@@ -596,14 +1277,89 @@ function parseValue(input) {
       );
 
   }
+
   else {
+
     s = s.replace(",", ".");
+
   }
 
+
   return Number(s);
+
 }
 
-/* CALCULATE */
+
+/* =========================================================
+   GET CURRENT RATIOS
+========================================================= */
+
+function getCurrentRatios() {
+
+  const ratios = {};
+
+
+  Object.entries(ratioInputIds).forEach(
+    ([key, id]) => {
+
+      ratios[key] =
+        Number(
+          document.getElementById(id).value
+        );
+
+    }
+  );
+
+
+  return ratios;
+
+}
+
+
+/* =========================================================
+   APPLY RATIOS
+========================================================= */
+
+function applyRatios(ratios) {
+
+  Object.entries(ratioInputIds).forEach(
+    ([key, id]) => {
+
+      const input =
+        document.getElementById(id);
+
+      if (
+        ratios[key] !== undefined &&
+        Number.isFinite(Number(ratios[key]))
+      ) {
+
+        input.value =
+          ratios[key];
+
+      }
+
+    }
+  );
+
+
+  calculate();
+
+}
+
+
+/* =========================================================
+   RATIO CHANGED
+========================================================= */
+
+function ratioChanged() {
+  calculate();
+}
+
+
+/* =========================================================
+   CALCULATE
+========================================================= */
+
 function calculate() {
 
   const input =
@@ -612,101 +1368,98 @@ function calculate() {
   const resultEl =
     document.getElementById("result");
 
+
   if (
     !company ||
     !account ||
     !phase ||
     input.trim() === ""
   ) {
+
     resultEl.textContent = "—";
+
     return;
+
   }
+
 
   const value =
     parseValue(input);
 
+
   if (!Number.isFinite(value)) {
+
     resultEl.textContent = "—";
+
     return;
+
   }
+
+
+  const rule =
+    calculationRules[
+      `${company}|${account}|${phase}`
+    ];
+
+
+  if (!rule) {
+
+    resultEl.textContent = "—";
+
+    return;
+
+  }
+
+
+  const ratios =
+    getCurrentRatios();
+
+  const ratio =
+    ratios[rule.ratio];
 
   let result;
 
-  if (
-    company === "Breakout" &&
-    account === "Classic" &&
-    phase === "Phase 1"
-  ) {
-    result = value / 3.55;
-  }
 
-  else if (
-    company === "Breakout" &&
-    account === "Classic" &&
-    phase === "Funded"
-  ) {
-    result = value * 0.80;
-  }
+  if (rule.operation === "divide") {
 
-  else if (
-    company === "Breakout" &&
-    account === "Turbo" &&
-    phase === "Phase 1"
-  ) {
-    result = value * 0.15;
-  }
+    result =
+      value / ratio;
 
-  else if (
-    company === "Breakout" &&
-    account === "Turbo" &&
-    phase === "Funded"
-  ) {
-    result = value * 0.75;
-  }
-
-  else if (
-    company === "Hypernova" &&
-    account === "Standard" &&
-    phase === "Phase 1"
-  ) {
-    result = value / 3.49;
-  }
-
-  else if (
-    company === "Hypernova" &&
-    account === "Standard" &&
-    phase === "Funded"
-  ) {
-    result = value * 0.70;
   }
 
   else {
-    resultEl.textContent = "—";
-    return;
+
+    result =
+      value * ratio;
+
   }
 
-  /*
-    ALWAYS display the result
-    with a decimal POINT
-    and exactly 3 decimals.
-  */
 
   resultEl.textContent =
     result.toFixed(3);
+
 }
 
-/* COPY RESULT */
+
+/* =========================================================
+   COPY RESULT
+========================================================= */
+
 async function copyResult() {
 
   const result =
     document.getElementById("result").textContent;
 
+
   if (result === "—") {
     return;
   }
 
+
   try {
+
     await navigator.clipboard.writeText(result);
+
   }
 
   catch {
@@ -723,25 +1476,36 @@ async function copyResult() {
     document.execCommand("copy");
 
     area.remove();
+
   }
+
 
   const button =
     document.getElementById("copyButton");
 
-  button.textContent = "Copied!";
+
+  button.textContent =
+    "Copied!";
 
   button.classList.add("copied");
 
+
   setTimeout(() => {
 
-    button.textContent = "Copy";
+    button.textContent =
+      "Copy";
 
     button.classList.remove("copied");
 
   }, 1200);
+
 }
 
-/* RESET */
+
+/* =========================================================
+   RESET CALCULATOR
+========================================================= */
+
 function resetCalculator() {
 
   company = "";
@@ -752,27 +1516,662 @@ function resetCalculator() {
 
   document.getElementById("result").textContent = "—";
 
+
   const copyButton =
     document.getElementById("copyButton");
 
-  copyButton.textContent = "Copy";
+
+  copyButton.textContent =
+    "Copy";
 
   copyButton.classList.remove("copied");
 
+
   updateUI();
+
 }
 
-/* RATIOS PANEL */
+
+/* =========================================================
+   RATIOS PANEL
+========================================================= */
+
 function toggleRatios() {
 
   const panel =
     document.getElementById("ratiosPanel");
 
   panel.classList.toggle("open");
+
 }
 
-/* INITIALIZE */
+
+/* =========================================================
+   GET PRESETS
+========================================================= */
+
+function getPresets() {
+
+  try {
+
+    const saved =
+      localStorage.getItem(
+        "ratioCalculatorPresets"
+      );
+
+    if (!saved) {
+      return [];
+    }
+
+    const presets =
+      JSON.parse(saved);
+
+    return Array.isArray(presets)
+      ? presets
+      : [];
+
+  }
+
+  catch {
+
+    return [];
+
+  }
+
+}
+
+
+/* =========================================================
+   SAVE PRESETS
+========================================================= */
+
+function savePresets(presets) {
+
+  localStorage.setItem(
+    "ratioCalculatorPresets",
+    JSON.stringify(presets)
+  );
+
+}
+
+
+/* =========================================================
+   SHOW STATUS
+========================================================= */
+
+function showStatus(message) {
+
+  const status =
+    document.getElementById("presetStatus");
+
+  status.textContent =
+    message;
+
+
+  setTimeout(() => {
+
+    if (status.textContent === message) {
+      status.textContent = "";
+    }
+
+  }, 1800);
+
+}
+
+
+/* =========================================================
+   SAVE PRESET
+========================================================= */
+
+function savePreset() {
+
+  const input =
+    document.getElementById("presetName");
+
+  const name =
+    input.value.trim();
+
+
+  if (!name) {
+
+    showStatus("Enter a preset name.");
+
+    input.focus();
+
+    return;
+
+  }
+
+
+  const presets =
+    getPresets();
+
+
+  const existingIndex =
+    presets.findIndex(
+      preset =>
+        preset.name.toLowerCase() ===
+        name.toLowerCase()
+    );
+
+
+  const preset = {
+    name: name,
+    ratios: getCurrentRatios()
+  };
+
+
+  if (existingIndex !== -1) {
+    presets[existingIndex] = preset;
+  }
+
+  else {
+    presets.push(preset);
+  }
+
+
+  savePresets(presets);
+
+
+  activePresetName =
+    name;
+
+
+  localStorage.setItem(
+    "ratioCalculatorLastPreset",
+    name
+  );
+
+
+  input.value = "";
+
+  renderPresets();
+
+  updateCurrentPresetDisplay();
+
+
+  showStatus(
+    existingIndex !== -1
+      ? "Preset updated."
+      : "Preset saved."
+  );
+
+}
+
+
+/* =========================================================
+   RENDER PRESETS
+========================================================= */
+
+function renderPresets() {
+
+  const container =
+    document.getElementById("presetList");
+
+  const presets =
+    getPresets();
+
+
+  container.innerHTML = "";
+
+
+  if (presets.length === 0) {
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "preset-empty";
+
+    empty.textContent =
+      "No saved presets.";
+
+    container.appendChild(empty);
+
+    return;
+
+  }
+
+
+  presets.forEach(
+    (preset, index) => {
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "preset-item";
+
+
+      const isSelected =
+        activePresetName !== null &&
+        preset.name === activePresetName;
+
+
+      if (isSelected) {
+
+        item.classList.add(
+          "selected-preset"
+        );
+
+      }
+
+
+      const name =
+        document.createElement("div");
+
+      name.className =
+        "preset-item-name";
+
+      name.textContent =
+        preset.name;
+
+
+      item.appendChild(name);
+
+
+      /* LOAD */
+
+      const loadButton =
+        document.createElement("button");
+
+      loadButton.className =
+        "preset-action";
+
+      loadButton.textContent =
+        "Load";
+
+      loadButton.onclick =
+        () => loadPreset(index);
+
+      item.appendChild(loadButton);
+
+
+      /* RENAME */
+
+      const renameButton =
+        document.createElement("button");
+
+      renameButton.className =
+        "preset-action";
+
+      renameButton.textContent =
+        "Rename";
+
+      renameButton.onclick =
+        () => renamePreset(index);
+
+      item.appendChild(renameButton);
+
+
+      /* DELETE */
+
+      const deleteButton =
+        document.createElement("button");
+
+      deleteButton.className =
+        "preset-action preset-delete";
+
+      deleteButton.textContent =
+        "Delete";
+
+      deleteButton.onclick =
+        () => deletePreset(index);
+
+      item.appendChild(deleteButton);
+
+
+      container.appendChild(item);
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   LOAD PRESET
+========================================================= */
+
+function loadPreset(index) {
+
+  const presets =
+    getPresets();
+
+
+  if (!presets[index]) {
+    return;
+  }
+
+
+  const preset =
+    presets[index];
+
+
+  applyRatios(
+    preset.ratios
+  );
+
+
+  activePresetName =
+    preset.name;
+
+
+  localStorage.setItem(
+    "ratioCalculatorLastPreset",
+    preset.name
+  );
+
+
+  renderPresets();
+
+  updateCurrentPresetDisplay();
+
+
+  showStatus(
+    "Preset loaded."
+  );
+
+}
+
+
+/* =========================================================
+   RENAME PRESET
+========================================================= */
+
+function renamePreset(index) {
+
+  const presets =
+    getPresets();
+
+
+  if (!presets[index]) {
+    return;
+  }
+
+
+  const oldName =
+    presets[index].name;
+
+
+  const newName =
+    prompt(
+      "Enter a new name for the preset:",
+      oldName
+    );
+
+
+  if (newName === null) {
+    return;
+  }
+
+
+  const name =
+    newName.trim();
+
+
+  if (!name) {
+
+    showStatus(
+      "Preset name cannot be empty."
+    );
+
+    return;
+
+  }
+
+
+  const duplicateIndex =
+    presets.findIndex(
+      (preset, i) =>
+        i !== index &&
+        preset.name.toLowerCase() ===
+        name.toLowerCase()
+    );
+
+
+  if (duplicateIndex !== -1) {
+
+    showStatus(
+      "A preset with that name already exists."
+    );
+
+    return;
+
+  }
+
+
+  presets[index].name =
+    name;
+
+
+  savePresets(presets);
+
+
+  if (
+    activePresetName === oldName
+  ) {
+
+    activePresetName =
+      name;
+
+    localStorage.setItem(
+      "ratioCalculatorLastPreset",
+      name
+    );
+
+  }
+
+
+  renderPresets();
+
+  updateCurrentPresetDisplay();
+
+
+  showStatus(
+    "Preset renamed."
+  );
+
+}
+
+
+/* =========================================================
+   DELETE PRESET
+========================================================= */
+
+function deletePreset(index) {
+
+  const presets =
+    getPresets();
+
+
+  if (!presets[index]) {
+    return;
+  }
+
+
+  const preset =
+    presets[index];
+
+
+  const confirmed =
+    confirm(
+      `Delete preset "${preset.name}"?`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  const wasActive =
+    activePresetName ===
+    preset.name;
+
+
+  presets.splice(index, 1);
+
+  savePresets(presets);
+
+
+  if (wasActive) {
+
+    activePresetName =
+      null;
+
+    localStorage.removeItem(
+      "ratioCalculatorLastPreset"
+    );
+
+  }
+
+
+  renderPresets();
+
+  updateCurrentPresetDisplay();
+
+
+  showStatus(
+    "Preset deleted."
+  );
+
+}
+
+
+/* =========================================================
+   RESET RATIOS TO DEFAULTS
+========================================================= */
+
+function resetRatiosToDefaults() {
+
+  applyRatios(
+    defaultRatios
+  );
+
+
+  activePresetName =
+    null;
+
+
+  localStorage.removeItem(
+    "ratioCalculatorLastPreset"
+  );
+
+
+  renderPresets();
+
+  updateCurrentPresetDisplay();
+
+
+  showStatus(
+    "Ratios reset to defaults."
+  );
+
+}
+
+
+/* =========================================================
+   CURRENT PRESET DISPLAY
+========================================================= */
+
+function updateCurrentPresetDisplay() {
+
+  const label =
+    document.getElementById(
+      "currentPresetLabel"
+    );
+
+
+  label.textContent =
+    activePresetName || "Default";
+
+}
+
+
+/* =========================================================
+   LOAD LAST PRESET
+========================================================= */
+
+function loadLastPreset() {
+
+  const lastPreset =
+    localStorage.getItem(
+      "ratioCalculatorLastPreset"
+    );
+
+
+  if (!lastPreset) {
+    return;
+  }
+
+
+  const presets =
+    getPresets();
+
+
+  const preset =
+    presets.find(
+      p => p.name === lastPreset
+    );
+
+
+  if (!preset) {
+
+    localStorage.removeItem(
+      "ratioCalculatorLastPreset"
+    );
+
+    return;
+
+  }
+
+
+  activePresetName =
+    preset.name;
+
+
+  applyRatios(
+    preset.ratios
+  );
+
+
+  renderPresets();
+
+  updateCurrentPresetDisplay();
+
+}
+
+
+/* =========================================================
+   ENTER KEY FOR PRESET NAME
+========================================================= */
+
+document
+  .getElementById("presetName")
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if (event.key === "Enter") {
+        savePreset();
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
 updateUI();
+
+renderPresets();
+
+updateCurrentPresetDisplay();
+
+loadLastPreset();
 
 </script>
 

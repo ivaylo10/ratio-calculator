@@ -855,7 +855,7 @@
     <div class="ratio-input-wrapper">
 
       <span
-        class="ratio-prefix divide"
+        class="ratio-prefix multiply"
         id="prefix-breakout-turbo-phase1"
       >
         ×
@@ -1048,7 +1048,7 @@ let resultShown = false;
 const defaultRatios = {
   breakoutClassicPhase1: 3.55,
   breakoutClassicFunded: 0.80,
-  breakoutTurboPhase1: 6,
+  breakoutTurboPhase1: 0.15,
   breakoutTurboFunded: 0.75,
   hypernovaStandardPhase1: 3.49,
   hypernovaStandardFunded: 0.70
@@ -1086,7 +1086,7 @@ const calculationRules = {
 
   "Breakout|Turbo|Phase 1": {
     ratio: "breakoutTurboPhase1",
-    operation: "divide"
+    operation: "multiply"
   },
 
   "Breakout|Turbo|Funded": {
